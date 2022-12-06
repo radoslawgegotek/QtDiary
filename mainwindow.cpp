@@ -7,52 +7,41 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
-    setSeparator();
+    if (m_entriesList.isEmpty())
+    {
+        ui->previous->setText("Brak wpisów");
+        ui->current->setText("Brak wpisów");
+        ui->next->setText("Brak wpisów");
+    }
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    m_list.clear();
+    m_entriesList.clear();
 }
 
 void MainWindow::addToList(Entry& newEntry)
 {
-    iter_listOfEntries = m_list.begin();
-    while(iter_listOfEntries != m_list.end())
+    iter_entriesList = m_entriesList.begin();
+    while(iter_entriesList != m_entriesList.end())
     {
-        if(*iter_listOfEntries == newEntry)
+        if(*iter_entriesList == newEntry)
         {
-            m_list.replace(std::distance(m_list.begin(),iter_listOfEntries), newEntry);
+            m_entriesList.replace(std::distance(m_entriesList.begin(),iter_entriesList), newEntry);
             return;
         }
-        iter_listOfEntries++;
+        iter_entriesList++;
     }
-    m_list.append(newEntry);
-    std::sort(m_list.begin(), m_list.end());
+    m_entriesList.append(newEntry);
+    std::sort(m_entriesList.begin(), m_entriesList.end());
 }
 
 void MainWindow::on_addEntry_clicked()
 {
-    ui->showRecentEntries->clear();
     Entry newEntry(ui->entryFieldEdit->toPlainText(), ui->dateTimeEdit->dateTime());
     addToList(newEntry);
+    ui->entryFieldEdit->clear();
 
-    for(Entry item : m_list)
-    {
-        ui->showRecentEntries->append(item.toString());
-        if(m_list.size() > 1)
-        {
-            ui->showRecentEntries->append(m_separator);
-        }
-    }
-
-}
-
-void MainWindow::setSeparator()
-{
-    for(int i = 0; i < ui->showRecentEntries->size().rwidth()/5.10; i++)
-    {
-        m_separator.append('-');
-    }
+    ui->current->setText(this->m_entriesList.last().toString());
 }

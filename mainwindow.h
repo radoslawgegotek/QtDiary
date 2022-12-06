@@ -22,10 +22,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QList<Entry> m_list;
-    QList<Entry>::Iterator iter_listOfEntries = m_list.begin();
-    QString m_separator;
-    void setSeparator();
+
+    QList<Entry> m_entriesList;
+    QList<Entry>::Iterator iter_entriesList = m_entriesList.begin();
+    int indexes[3]{};
 
     void addToList(Entry& newEntry);
 };
