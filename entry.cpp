@@ -4,7 +4,7 @@ Entry::Entry(QString text, QDateTime date)
     :m_entry(text), m_dateTime(date)
 {}
 
-bool Entry::operator==(const Entry& rhs)
+bool Entry::operator==(const Entry& rhs) const
 {
     return (this->m_dateTime.date() == rhs.m_dateTime.date() &&
             this->m_dateTime.time() == rhs.m_dateTime.time());
@@ -13,6 +13,16 @@ bool Entry::operator==(const Entry& rhs)
 bool Entry::operator!=(const Entry& rhs)
 {
     return !(*this == rhs);
+}
+
+const QDateTime &Entry::dateTime() const
+{
+    return m_dateTime;
+}
+
+const QString &Entry::entry() const
+{
+    return m_entry;
 }
 
 bool Entry::operator<(const Entry& rhs)

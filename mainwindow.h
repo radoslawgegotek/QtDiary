@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QKeyEvent>
+#include <QtXml>
 #include "entry.h"
 
 QT_BEGIN_NAMESPACE
@@ -19,14 +21,22 @@ public:
 
 private slots:
     void on_addEntry_clicked();
+    void on_nextButton_clicked();
+    void on_previousButton_clicked();
+    void on_deleteCurrentEntry_clicked();
 
 private:
+    void printEntries();
+    void addToVec(Entry& newEntry);
+    void writeEntries();
+    void readEntries();
+
+    void keyPressEvent(QKeyEvent*) override;
+    void closeEvent(QCloseEvent*) override;
+
     Ui::MainWindow *ui;
-
-    QList<Entry> m_entriesList;
-    QList<Entry>::Iterator iter_entriesList = m_entriesList.begin();
-    int indexes[3]{};
-
-    void addToList(Entry& newEntry);
+    QVector<Entry> m_entrVec;
+    QFile entriesFile;
+    int currentElement = 0;
 };
 #endif // MAINWINDOW_H

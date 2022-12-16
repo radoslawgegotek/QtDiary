@@ -10,9 +10,13 @@ public:
 
     QString toString();
 
-    bool operator==(const Entry&);
+
+    bool operator==(const Entry&)const;
     bool operator<(const Entry&);
-    bool operator!=(const Entry&);
+    bool operator!=(const Entry &);
+
+    const QDateTime &dateTime() const;
+    const QString &entry() const;
 
 private:
     QString m_entry;
