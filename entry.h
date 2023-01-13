@@ -7,6 +7,7 @@ class Entry
 {
 public:
     Entry(QString, QDateTime);
+    Entry();
 
     QString toString();
 
@@ -17,6 +18,10 @@ public:
 
     const QDateTime &dateTime() const;
     const QString &entry() const;
+
+    void setEntry(const QString &newEntry);
+
+    void setDateTime(const QDateTime &newDateTime);
 
 private:
     QString m_entry;

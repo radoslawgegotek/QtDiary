@@ -6,15 +6,32 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
-    readEntries();
-    if (m_entrVec.isEmpty())
+
+    m_loginWindow = new LoginWindow(nullptr);
+
+    while(!userCorrect)
     {
-        QString brakWpisow = QString("<span style=\" color:#ff0000; font: bold;\">%1</span>").arg("Brak wpisów");
-        ui->previous->setText(brakWpisow);
-        ui->current->setText(brakWpisow);
-        ui->next->setText(brakWpisow);
+        int result = m_loginWindow->exec();
+        userCorrect = m_loginWindow->getIsUserCorrect();
+        if(!result)
+            break;
     }
+
+    if(userCorrect)
+    {
+        readEntries();
+        if (m_entrVec.isEmpty())
+        {
+            QString brakWpisow = QString("<span style=\" color:#ff0000; font: bold;\">%1</span>").arg("Brak wpisów");
+            ui->previous->setText(brakWpisow);
+            ui->current->setText(brakWpisow);
+            ui->next->setText(brakWpisow);
+        }
+    }
+    else
+        QTimer::singleShot(0, this, SLOT(close()));
+
+    delete m_loginWindow;
 }
 
 MainWindow::~MainWindow()
@@ -129,15 +146,17 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::on_addEntry_clicked()
 {
-    if(!ui->entryFieldEdit->toPlainText().isEmpty())
+    Entry newEntry;
+    m_addingDialog = new NewEntryDialog(newEntry, nullptr);
+
+    int result = m_addingDialog->exec();
+
+    if(result)
     {
-        Entry newEntry(ui->entryFieldEdit->toPlainText(), ui->dateTimeEdit->dateTime());
         addToVec(newEntry);
-        ui->entryFieldEdit->clear();
-
         currentElement = m_entrVec.indexOf(newEntry);
-
         printEntries();
+        qInfo() << "WYKONANE";
     }
 }
 
@@ -193,7 +212,6 @@ void MainWindow::on_previousButton_clicked()
         printEntries();
     }
 }
-
 
 void MainWindow::on_deleteCurrentEntry_clicked()
 {

@@ -4,6 +4,11 @@ Entry::Entry(QString text, QDateTime date)
     :m_entry(text), m_dateTime(date)
 {}
 
+Entry::Entry()
+{
+
+}
+
 bool Entry::operator==(const Entry& rhs) const
 {
     return (this->m_dateTime.date() == rhs.m_dateTime.date() &&
@@ -23,6 +28,16 @@ const QDateTime &Entry::dateTime() const
 const QString &Entry::entry() const
 {
     return m_entry;
+}
+
+void Entry::setEntry(const QString &newEntry)
+{
+    m_entry = newEntry;
+}
+
+void Entry::setDateTime(const QDateTime &newDateTime)
+{
+    m_dateTime = newDateTime;
 }
 
 bool Entry::operator<(const Entry& rhs)

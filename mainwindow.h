@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QKeyEvent>
 #include <QtXml>
+#include "newentrydialog.h"
+#include "loginwindow.h"
 #include "entry.h"
 
 QT_BEGIN_NAMESPACE
@@ -35,8 +37,11 @@ private:
     void closeEvent(QCloseEvent*) override;
 
     Ui::MainWindow *ui;
+    NewEntryDialog *m_addingDialog;
+    LoginWindow *m_loginWindow;
     QVector<Entry> m_entrVec;
     QFile entriesFile;
     int currentElement = 0;
+    bool userCorrect = false;
 };
 #endif // MAINWINDOW_H
