@@ -140,27 +140,43 @@ void MainWindow::on_writeToFile_clicked()
 }
 
 
-void MainWindow::on_addEntryType_clicked()
-{
-    QString type = ui->EntryTypes->currentText();
-    mainApp->addEntryToType(type);
-}
-
-
 void MainWindow::on_radosne_stateChanged(int arg1)
 {
     mainApp->checkedBoxesChage("radosne", arg1);
+    if(!arg1) {
+        ui->smutne->setEnabled(true);
+        ui->neutralne->setEnabled(true);
+    }
+    else{
+        ui->smutne->setEnabled(false);
+        ui->neutralne->setEnabled(false);
+    }
 }
 
 
 void MainWindow::on_neutralne_stateChanged(int arg1)
 {
     mainApp->checkedBoxesChage("neutralne", arg1);
+    if(!arg1) {
+        ui->radosne->setEnabled(true);
+        ui->smutne->setEnabled(true);
+    }
+    else{
+        ui->smutne->setEnabled(false);
+        ui->radosne->setEnabled(false);
+    }
 }
-
 
 void MainWindow::on_smutne_stateChanged(int arg1)
 {
     mainApp->checkedBoxesChage("smutne", arg1);
+    if(!arg1) {
+        ui->neutralne->setEnabled(true);
+        ui->radosne->setEnabled(true);
+    }
+    else{
+        ui->radosne->setEnabled(false);
+        ui->neutralne->setEnabled(false);
+    }
 }
 
