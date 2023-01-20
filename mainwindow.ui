@@ -55,20 +55,6 @@
            <number>0</number>
           </property>
           <item row="0" column="3">
-           <widget class="QPushButton" name="previousButton">
-            <property name="text">
-             <string>Góra</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="deleteCurrentEntry">
-            <property name="text">
-             <string>Usuń środkowy wpis</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -81,20 +67,58 @@
             </property>
            </spacer>
           </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="nextButton">
+          <item row="0" column="1">
+           <widget class="QComboBox" name="EntryTypes"/>
+          </item>
+          <item row="0" column="5">
+           <widget class="QPushButton" name="writeToFile">
             <property name="text">
-             <string>Dół</string>
+             <string>Zapisz</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="7">
+           <widget class="QPushButton" name="deleteCurrentEntry">
+            <property name="text">
+             <string>Usuń środkowy wpis</string>
             </property>
            </widget>
           </item>
           <item row="0" column="4">
+           <widget class="QPushButton" name="chooseFile">
+            <property name="text">
+             <string>Wybierz inny plik</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="11">
            <widget class="QPushButton" name="addEntry">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
             <property name="text">
              <string>Dodaj wpis</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="8">
+           <widget class="QPushButton" name="previousButton">
+            <property name="text">
+             <string>Góra</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="9">
+           <widget class="QPushButton" name="nextButton">
+            <property name="text">
+             <string>Dół</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="addEntryType">
+            <property name="text">
+             <string>Dodaj akt. wspomienie do</string>
             </property>
            </widget>
           </item>
@@ -144,6 +168,39 @@
             <property name="readOnly">
              <bool>true</bool>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="EntryType">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QCheckBox" name="radosne">
+               <property name="text">
+                <string>Radosne</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="neutralne">
+               <property name="text">
+                <string>Neutralne</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="smutne">
+               <property name="text">
+                <string>Smutne</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>

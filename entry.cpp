@@ -40,7 +40,17 @@ void Entry::setDateTime(const QDateTime &newDateTime)
     m_dateTime = newDateTime;
 }
 
-bool Entry::operator<(const Entry& rhs)
+const QString &Entry::type() const
+{
+    return m_type;
+}
+
+void Entry::setType(const QString &newType)
+{
+    m_type = newType;
+}
+
+bool Entry::operator<(const Entry& rhs) const
 {
     if(this->m_dateTime.date() > rhs.m_dateTime.date())
         return true;

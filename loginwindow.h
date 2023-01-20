@@ -4,7 +4,8 @@
 #include <QDialog>
 #include <QtXml>
 #include <QMessageBox>
-#include "createaccount.h"
+
+class App;
 
 namespace Ui {
 class LoginWindow;
@@ -15,10 +16,8 @@ class LoginWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit LoginWindow(QWidget *parent = nullptr);
+    explicit LoginWindow(QWidget *parent = nullptr, App *mainApp = nullptr);
     ~LoginWindow();
-
-    bool getIsUserCorrect() const;
 
 private slots:
     void on_buttonBox_accepted();
@@ -29,8 +28,7 @@ private slots:
 
 private:
     Ui::LoginWindow *ui;
-    CreateAccount *m_creatingAccountWindow;
-    bool isUserCorrect = false;
+    App *mainApp;
 };
 
 #endif // LOGINWINDOW_H

@@ -12,8 +12,8 @@ public:
     QString toString();
 
 
-    bool operator==(const Entry&)const;
-    bool operator<(const Entry&);
+    bool operator==(const Entry&) const;
+    bool operator<(const Entry&) const;
     bool operator!=(const Entry &);
 
     const QDateTime &dateTime() const;
@@ -23,9 +23,13 @@ public:
 
     void setDateTime(const QDateTime &newDateTime);
 
+    const QString &type() const;
+    void setType(const QString &newType);
+
 private:
     QString m_entry;
     QDateTime m_dateTime;
+    QString m_type;
 };
 
 #endif // ENTRY_H

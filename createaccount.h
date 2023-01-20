@@ -5,6 +5,8 @@
 #include <QtXml>
 #include <QMessageBox>
 
+class App;
+
 namespace Ui {
 class CreateAccount;
 }
@@ -14,7 +16,7 @@ class CreateAccount : public QDialog
     Q_OBJECT
 
 public:
-    explicit CreateAccount(QWidget *parent = nullptr);
+    explicit CreateAccount(QWidget *parent = nullptr, App *app = nullptr);
     ~CreateAccount();
 
 private slots:
@@ -22,6 +24,7 @@ private slots:
 
 private:
     Ui::CreateAccount *ui;
+    App *mainApp = nullptr;
 };
 
 #endif // CREATEACCOUNT_H

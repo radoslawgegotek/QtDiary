@@ -1,9 +1,11 @@
 #include "loginwindow.h"
 #include "ui_loginwindow.h"
+#include "app.h"
 
-LoginWindow::LoginWindow(QWidget *parent) :
+LoginWindow::LoginWindow(QWidget *parent, App *app) :
     QDialog(parent),
-    ui(new Ui::LoginWindow)
+    ui(new Ui::LoginWindow),
+    mainApp(app)
 {
     ui->setupUi(this);
 }
@@ -19,56 +21,17 @@ void LoginWindow::on_buttonBox_accepted()
     {
         QString login = ui->login->text();
         QString password = ui->password->text();
-
-        QFileInfo file("users.xml");
-        QDomDocument document;
-        QFile usersFile;
-
-        if(file.isFile() && file.exists())
-        {
-            usersFile.setFileName("users.xml");
-
-            if(usersFile.open(QIODevice::ReadOnly | QIODevice::Text))
-            {
-                if(document.setContent(&usersFile))
-                {
-                    QDomElement root = document.firstChildElement();
-                    QDomNodeList usersList = root.elementsByTagName("User");
-
-                    for(int i = 0; i < usersList.size(); i++)
-                    {
-                        QDomElement user = usersList.at(i).toElement();
-                        if(login == user.attribute("Login") && password == user.attribute("Password"))
-                        {
-                            isUserCorrect = true;
-                            usersFile.close();
-                            return;
-                        }
-                    }
-                }
-            }
-            usersFile.close();
-            QMessageBox::information(this, "Błąd logowania", "Użytkownik nie istnieje");
-        }
+        mainApp->checkUser(login, password);
     }
-}
-
-bool LoginWindow::getIsUserCorrect() const
-{
-    return isUserCorrect;
 }
 
 void LoginWindow::on_buttonBox_rejected()
 {
-
+    return;
 }
 
 
 void LoginWindow::on_newAccount_clicked()
 {
-    m_creatingAccountWindow = new CreateAccount(nullptr);
-    m_creatingAccountWindow->exec();
-
-    delete m_creatingAccountWindow;
+    mainApp->createNewAccount();
 }
-

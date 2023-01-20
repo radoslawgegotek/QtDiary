@@ -27,7 +27,7 @@ void NewEntryDialog::on_finished(int arg)
 {
     Q_UNUSED(arg);
 
-    if(m_returnEntry != nullptr && (!ui->poleWpisu->toPlainText().isEmpty()))
+    if(m_returnEntry != nullptr && !(ui->poleWpisu->toPlainText().isEmpty()) && ui->poleWpisu->toPlainText() != "")
     {
         m_returnEntry->setEntry(ui->poleWpisu->toPlainText());
         m_returnEntry->setDateTime(ui->dateTimeEdit->dateTime());

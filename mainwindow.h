@@ -4,9 +4,12 @@
 #include <QMainWindow>
 #include <QKeyEvent>
 #include <QtXml>
-#include "newentrydialog.h"
-#include "loginwindow.h"
+#include <QFileDialog>
 #include "entry.h"
+
+
+class App;
+class Entry;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,7 +20,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr, App *app = nullptr);
     ~MainWindow();
 
 
@@ -27,21 +30,27 @@ private slots:
     void on_previousButton_clicked();
     void on_deleteCurrentEntry_clicked();
 
-private:
-    void printEntries();
-    void addToVec(Entry& newEntry);
-    void writeEntries();
-    void readEntries();
+    //sloty z klasa app
+    void on_showEntries(QVector<Entry> entries, QList<Entry> listEntry, int currEl);
 
+    void on_chooseFile_clicked();
+
+    void on_writeToFile_clicked();
+
+    void on_addEntryType_clicked();
+
+    void on_radosne_stateChanged(int arg1);
+
+    void on_neutralne_stateChanged(int arg1);
+
+    void on_smutne_stateChanged(int arg1);
+
+private:
     void keyPressEvent(QKeyEvent*) override;
     void closeEvent(QCloseEvent*) override;
 
+    App *mainApp = nullptr;
     Ui::MainWindow *ui;
-    NewEntryDialog *m_addingDialog;
-    LoginWindow *m_loginWindow;
-    QVector<Entry> m_entrVec;
-    QFile entriesFile;
-    int currentElement = 0;
     bool userCorrect = false;
 };
 #endif // MAINWINDOW_H

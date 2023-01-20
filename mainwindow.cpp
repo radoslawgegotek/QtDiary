@@ -1,125 +1,34 @@
 #include "mainwindow.h"
+#include "app.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent, App *app)
     : QMainWindow(parent)
+    , mainApp(app)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    mainApp->setGui(this);
 
-    m_loginWindow = new LoginWindow(nullptr);
+    connect(app,SIGNAL(showEntries(QVector<Entry>,QList<Entry>,int)),this,SLOT(on_showEntries(QVector<Entry>,QList<Entry>,int)));
 
-    while(!userCorrect)
+
+    if(mainApp->loginUser())
     {
-        int result = m_loginWindow->exec();
-        userCorrect = m_loginWindow->getIsUserCorrect();
-        if(!result)
-            break;
-    }
-
-    if(userCorrect)
-    {
-        readEntries();
-        if (m_entrVec.isEmpty())
-        {
-            QString brakWpisow = QString("<span style=\" color:#ff0000; font: bold;\">%1</span>").arg("Brak wpisów");
-            ui->previous->setText(brakWpisow);
-            ui->current->setText(brakWpisow);
-            ui->next->setText(brakWpisow);
-        }
+        mainApp->loadEntriesFromFile("wpisy.xml");
     }
     else
         QTimer::singleShot(0, this, SLOT(close()));
 
-    delete m_loginWindow;
+    ui->EntryTypes->addItem("smutne");
+    ui->EntryTypes->addItem("radosne");
+    ui->EntryTypes->addItem("neutralne");
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    m_entrVec.clear();
-}
-
-void MainWindow::addToVec(Entry& newEntry)
-{
-    for(Entry &entry : m_entrVec)
-    {
-       if(entry == newEntry)
-       {
-           std::replace(m_entrVec.begin(), m_entrVec.end(), entry, newEntry);
-           return;
-       }
-    }
-    m_entrVec.append(newEntry);
-    std::sort(m_entrVec.begin(), m_entrVec.end());
-}
-
-void MainWindow::writeEntries()
-{
-    // zapis wpisow do xml
-
-    QDomDocument document;
-    QDomElement root = document.createElement("Wpisy");
-    document.appendChild(root);
-
-    //zapisanie ostatniego aktualnego indexu wpisu
-    QDomElement index = document.createElement("Index");
-    index.setAttribute("Current_Index", currentElement);
-    root.appendChild(index);
-
-    //zapisanie wpisow
-    for(Entry &element : m_entrVec)
-    {
-        QDomElement entry = document.createElement("Wpis");
-        entry.setAttribute("Text", element.entry());
-        entry.setAttribute("Date", element.dateTime().toString());
-        root.appendChild(entry);
-    }
-
-    //zapisanie wszystkiego do pliku
-    if(entriesFile.fileName().isEmpty())
-        entriesFile.setFileName("wpisy.xml");
-
-    if(entriesFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream stream(&entriesFile);
-        stream << document.toString();
-    }
-    entriesFile.close();
-}
-
-void MainWindow::readEntries()
-{
-    QFileInfo file("wpisy.xml");
-    QDomDocument document;
-
-    if(file.isFile() && file.exists())
-    {
-        entriesFile.setFileName("wpisy.xml");
-
-        if(entriesFile.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-            if(document.setContent(&entriesFile))
-            {
-                QDomElement root = document.firstChildElement();
-                QDomNode index = root.firstChildElement();
-                QDomElement currIndex = index.toElement();
-                currentElement = currIndex.attribute("Current_Index").toInt();
-
-                QDomNodeList entriesList = root.elementsByTagName("Wpis");
-
-                for(int i = 0; i < entriesList.size(); i++)
-                {
-                    QDomNode entry = entriesList.at(i);
-                    QDomElement elEntry = entry.toElement();
-                    Entry newEntry(elEntry.attribute("Text"), QDateTime::fromString(elEntry.attribute("Date")));
-                    m_entrVec.append(newEntry);
-                }
-            }
-        }
-        entriesFile.close();
-        printEntries();
-    }
 }
 
 void MainWindow::keyPressEvent(QKeyEvent * event)
@@ -140,98 +49,118 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event);
-    if(!m_entrVec.isEmpty())
-        writeEntries();
+    if(!mainApp->isEntriesEmpty())
+        mainApp->writeEntriesTofile("wpisy.xml");
+    else
+        mainApp->deleteEntriesFile();
 }
 
 void MainWindow::on_addEntry_clicked()
 {
-    Entry newEntry;
-    m_addingDialog = new NewEntryDialog(newEntry, nullptr);
-
-    int result = m_addingDialog->exec();
-
-    if(result)
-    {
-        addToVec(newEntry);
-        currentElement = m_entrVec.indexOf(newEntry);
-        printEntries();
-        qInfo() << "WYKONANE";
-    }
-}
-
-void MainWindow::printEntries()
-{
-    ui->current->setText(m_entrVec[currentElement].toString());
-
-    QString brakWpisow = QString("<span style=\" color:#ff0000; font: bold;\">%1</span>").arg("Brak wpisów");
-    QString brakElementu = QString("<span style=\" color:#ff0000;\">%1</span>").arg("Brak elementu");
-
-    if(m_entrVec.isEmpty())
-    {
-        ui->previous->setText(brakWpisow);
-        ui->current->setText(brakWpisow);
-        ui->next->setText(brakWpisow);
-        return;
-    }
-
-    if((currentElement - 1) < 0)
-    {
-        ui->previous->setText(brakElementu);
-    }
-    else
-    {
-        ui->previous->setText(m_entrVec[currentElement - 1].toString());
-    }
-
-    if ((currentElement + 1) >= m_entrVec.size())
-    {
-        ui->next->setText(brakElementu);
-    }
-    else
-    {
-        ui->next->setText(m_entrVec[currentElement + 1].toString());
-    }
+    mainApp->addNewEntry();
 }
 
 void MainWindow::on_nextButton_clicked()
 {
-    if(currentElement + 1 < m_entrVec.size())
-    {
-        currentElement++;
-        printEntries();
-    }
+    mainApp->scrollEntriesUp();
 }
-
 
 void MainWindow::on_previousButton_clicked()
 {
-    if(currentElement - 1 >= 0)
-    {
-        currentElement--;
-        printEntries();
-    }
+    mainApp->scrollEntriesDown();
 }
 
 void MainWindow::on_deleteCurrentEntry_clicked()
 {
-    if(!m_entrVec.isEmpty())
-    {
-        m_entrVec.erase(m_entrVec.begin() + currentElement);
+    mainApp->deleteCurrentEntry();
+}
 
-        if(currentElement - 1 >= 0)
-        {
-           currentElement--;
-           printEntries();
-           return;
-        }
-        else if (currentElement + 1 < m_entrVec.size())
-        {
-            currentElement++;
-            printEntries();
-            return;
-        }
-        printEntries();
+void MainWindow::on_showEntries(QVector<Entry> entries, QList<Entry> listEntry, int currEl)
+{
+    QString brakWpisow = QString("<span style=\" color:#ff0000; font: bold;\">%1</span>").arg("Brak wpisów");
+    QString brakElementu = QString("<span style=\" color:#ff0000;\">%1</span>").arg("Brak elementu");
+
+    if(entries.isEmpty() && listEntry.isEmpty())
+    {
+        ui->previous->setText(brakWpisow);
+        ui->next->setText(brakWpisow);
+        ui->current->setText(brakWpisow);
+        return;
     }
+
+
+    if(!listEntry.isEmpty())
+    {
+        ui->current->setText(listEntry[currEl].toString());
+        if((currEl - 1) < 0)
+            ui->previous->setText(brakElementu);
+        else
+            ui->previous->setText(listEntry[currEl - 1].toString());
+
+        if ((currEl + 1) >= listEntry.size())
+            ui->next->setText(brakElementu);
+        else
+            ui->next->setText(listEntry[currEl + 1].toString());
+    }
+    else
+    {
+        //qInfo() << currEl;
+        ui->current->setText(entries[currEl].toString());
+        if((currEl - 1) < 0)
+            ui->previous->setText(brakElementu);
+        else
+            ui->previous->setText(entries[currEl - 1].toString());
+
+        if ((currEl + 1) >= entries.size())
+            ui->next->setText(brakElementu);
+        else
+            ui->next->setText(entries[currEl + 1].toString());
+    }
+}
+
+
+void MainWindow::on_chooseFile_clicked()
+{
+    QString fileName;
+    fileName = QFileDialog::getOpenFileName(this, tr("Wybierz plik ze wspomnieniami"),
+                                                        "./",
+                                                        tr("XML (*.xml)"));
+    mainApp->loadEntriesFromFile(fileName);
+}
+
+
+void MainWindow::on_writeToFile_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Zapisz jako"),
+                               "./",
+                               tr("XML (*.xml)"));
+
+    if(!mainApp->isEntriesEmpty())
+        mainApp->writeEntriesTofile(fileName);
+}
+
+
+void MainWindow::on_addEntryType_clicked()
+{
+    QString type = ui->EntryTypes->currentText();
+    mainApp->addEntryToType(type);
+}
+
+
+void MainWindow::on_radosne_stateChanged(int arg1)
+{
+    mainApp->checkedBoxesChage("radosne", arg1);
+}
+
+
+void MainWindow::on_neutralne_stateChanged(int arg1)
+{
+    mainApp->checkedBoxesChage("neutralne", arg1);
+}
+
+
+void MainWindow::on_smutne_stateChanged(int arg1)
+{
+    mainApp->checkedBoxesChage("smutne", arg1);
 }
 
