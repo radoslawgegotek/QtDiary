@@ -140,6 +140,14 @@ void MainWindow::on_writeToFile_clicked()
 }
 
 
+void MainWindow::on_addEntryType_clicked()
+{
+    QString type = ui->EntryTypes->currentText();
+    mainApp->addEntryToType(type);
+    QMessageBox::information(this, "Dodane","Rodzaj wspomnienia dodany");
+}
+
+
 void MainWindow::on_radosne_stateChanged(int arg1)
 {
     mainApp->checkedBoxesChage("radosne", arg1);

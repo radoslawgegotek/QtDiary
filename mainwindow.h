@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QtXml>
 #include <QFileDialog>
+#include <QMessageBox>
 #include "entry.h"
 
 
