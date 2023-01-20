@@ -1,6 +1,0 @@
-<Users>
- <User Password="admin" Login="admin"/>
- <User Password="student" Login="student"/>
- <User Password="pk" Login="pk"/>
- <User Password="123" Login="123"/>
-</Users>
